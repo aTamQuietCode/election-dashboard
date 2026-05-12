@@ -1,0 +1,41 @@
+.App {
+  padding: 20px;
+  background-color: #f5f5f5;
+  min-height: 100vh /* ビューポート全体の高さを確保 */;
+}
+
+.App h1 {
+  text-align: center;
+  margin-bottom: 50px;
+  color: #333;
+}
+
+.election-tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.election-tabs button {
+  padding: 10px 20px;
+  border: none;
+  background-color: #f1f3f4;
+  color: black;
+  cursor: pointer;
+  border-radius: 4px;
+  font-weight: bold;
+}
+
+.election-tabs button:hover {
+  background-color: #1a73e8;
+  color: white;
+  font-weight: bold;
+}
+
+.voting-ratio {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+

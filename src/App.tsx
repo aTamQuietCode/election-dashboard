@@ -1,0 +1,76 @@
+import { useEffect, useState, useCallback } from 'react';
+import Papa from "papaparse";
+import type { ChartDataPoint, RawElectionRecord } from "./types/election";
+import { processElectionCSV } from "./utils/dataProcessor";
+import { ElectionTable } from "./components/ElectionTable";
+import "./App.css";
+
+const ELECTIONS = [
+  { id: "2026", label: "2026年 衆院選 比例", file: "csv/51shuin_hirei_kanagawa.csv" },
+  { id: "2024", label: "2024年 衆院選 比例", file: "csv/50shuin_hirei_kanagawa.csv" },
+  { id: "2021", label: "2021年 衆院選 比例", file: "csv/49shuin_hirei_kanagawa.csv" },
+]
+
+const App = () => {
+  const [selectedId, setSelectedId] = useState<string>(ELECTIONS[0].id);
+  const [tableData, setTableData] = useState<ChartDataPoint[]>([]);
+  const [parties, setParties] = useState<string[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const loadData = useCallback((filePath: string) => {
+    setLoading(true);
+    fetch(filePath)
+      .then(response => response.text())
+      .then(csvText => {
+        Papa.parse(csvText, {
+          header: true,
+          dynamicTyping: true,
+          skipEmptyLines: true,
+          complete: (results) => {
+            console.log('Raw CSV Data sample:', results.data[0]); // ← これで1行目の中身を確認
+            const rawData = results.data as RawElectionRecord[];
+            // sort with timestamp
+            const sortedRaw = [...rawData].sort((a, b) => 
+              new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+            );
+            setTableData(processElectionCSV(sortedRaw));
+            setParties(Array.from(new Set(rawData.map(record => record.party_name))));
+            setLoading(false);
+          }
+        });
+      });
+  }, []);
+
+  useEffect(() => {
+    const config = ELECTIONS.find(e => e.id === selectedId);
+    if (config) {
+      loadData(config.file);
+    }
+  }, [selectedId, loadData]);
+
+  return (
+    <div className="App">
+      <h1>衆議院議員総選挙 比例代表データ</h1>
+      
+      {/* switching tab by fiscal year */}
+      <div className="election-tabs">
+        {ELECTIONS.map((election) => (
+          <button
+            key={election.id}
+            className={`election-tab ${selectedId === election.id ? "active" : ""}`}
+            onClick={() => setSelectedId(election.id)}
+          >
+            {election.label}
+          </button>
+        ))}
+      </div>
+      {loading ? (
+        <p>Loading data...</p>
+      ) : (
+        <ElectionTable data={tableData} parties={parties} />
+      )}
+    </div>
+  );
+};
+
+export default App;
