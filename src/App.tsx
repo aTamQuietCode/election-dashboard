@@ -4,6 +4,8 @@ import type { ChartDataPoint, RawElectionRecord } from "./types/election";
 import { processElectionCSV } from "./utils/dataProcessor";
 import { ElectionTable } from "./components/ElectionTable";
 import "./App.css";
+import { VotingRatioChart } from './components/VotingRatioChart';
+import { PartyVotesChart } from './components/PartyVotesChart';
 
 const ELECTIONS = [
   { id: "2026", label: "2026年 衆院選 比例", file: "csv/51shuin_hirei_kanagawa.csv" },
@@ -50,7 +52,7 @@ const App = () => {
 
   return (
     <div className="App">
-      <h1>衆議院議員総選挙 比例代表データ</h1>
+      <h1>神奈川県 衆議院議員総選挙 比例代表データ</h1>
       
       {/* switching tab by fiscal year */}
       <div className="election-tabs">
@@ -67,7 +69,18 @@ const App = () => {
       {loading ? (
         <p>Loading data...</p>
       ) : (
-        <ElectionTable data={tableData} parties={parties} />
+        <>
+          {/* 1. Display the whole progress(total votes) */}
+          <PartyVotesChart data = {tableData} parties={parties} />
+
+          {/* 2. Display the each party map(ratio). */}
+          <VotingRatioChart data={tableData} parties={parties} />
+
+          <div className='election-table'>
+            <h3>詳細データテーブル</h3>
+            <ElectionTable data={tableData} parties={parties} />
+          </div>
+        </>
       )}
     </div>
   );

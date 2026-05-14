@@ -5,7 +5,9 @@ export interface RawElectionRecord {
 }
 
 export interface ChartDataPoint {
-    timestamp: Date;
+    timestamp: string;
+    minutes: number;
     totalVotes: number;
-    [partyName: string]: number | Date;
+    baseTimestamp?: string;
+    [partyName: string]: any;
 }
