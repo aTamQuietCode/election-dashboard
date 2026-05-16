@@ -1,6 +1,5 @@
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Legend, ResponsiveContainer, Tooltip } from "recharts";
+import { CartesianGrid, Legend, LineChart, ResponsiveContainer, XAxis, YAxis, Line, Tooltip } from "recharts";
 import type { ChartDataPoint } from "../types/election";
-import "./ElectionChart.css";
 import { formatChartTime } from "../utils/dataProcessor";
 
 interface Props {
@@ -8,47 +7,44 @@ interface Props {
     parties: string[];
 }
 
-export const VotingRatioChart = ({ data, parties }: Props) => {
-    // 基準時刻はデータの最初の要素から取得
+export const VelocityChart = ({ data, parties }: Props) => {
     const baseTimestamp = data[0]?.baseTimestamp;
     if (!data || data.length === 0) return <p>No data available for chart.</p>;
 
     return (
         <div className="election-chart">
-            <h3>得票比率(%)の推移</h3>
+            <h3>得票速度（時間帯ごとの増分票数）</h3>
             <div className="chart-container">
                 <ResponsiveContainer width='100%' height={400}>
                     <LineChart data={data}>
                         <CartesianGrid />
                         <XAxis 
-                            dataKey="minutes"
+                            dataKey={"minutes"}
                             type="number"
                             domain={[0, "dataMax"]}
                             allowDataOverflow={true}
                             hide={false}
-                            tickFormatter={(value) => formatChartTime(value, baseTimestamp)}
+                            tickFormatter={(val) => formatChartTime(val, baseTimestamp)}
                             tick={{ fontSize: 12 }}
                         />
-                        <YAxis unit="%" tick={{ fontSize: 12 }} domain={[0, 'auto']} />
-                        <Tooltip 
+                        <YAxis tickFormatter={(val) => val.toLocaleString()} />
+                        <Tooltip
                             labelFormatter={(value) => formatChartTime(value, baseTimestamp)}
                             contentStyle={{ fontSize: '12px' }}
                         />
                         <Legend />
                         {parties.map((party, index) => (
-                            <Line
+                            <Line 
                                 key={party}
-                                dataKey={`${party}_share`}
-                                name={party}
-                                stroke={`hsl(${(index * 137.5) % 360}, 70%, 50%)`}
-                                dot={{ r: 3 }}
-                                activeDot={{ r: 6 }}
+                                dataKey={`${party}_delta`}
+                                name={`${party}(時速)`}
+                                stroke={`hsl(${(index * 35) % 360}, 70%, 50%)`}
+                                dot={true}
                                 strokeWidth={2}
-                                connectNulls
                             />
                         ))}
                     </LineChart>
-                </ResponsiveContainer>
+                 </ResponsiveContainer>
             </div>
         </div>
     );

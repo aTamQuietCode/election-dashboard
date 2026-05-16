@@ -10,18 +10,21 @@ interface Props {
 
 export const PartyVotesChart = ({ data, parties }: Props) => {
     // 基準時刻はデータの最初の要素から取得
-    const baseTimestamp = data[0]?.baseTimestamp;
+    const baseTimestamp = data[0]?.baseTimestamp;    
+    if (!data || data.length === 0) return <p>No data available for chart.</p>;
+    
     return (
         <div className='election-chart'>
             <h3>政党別 得票数の推移（累計）</h3>
             <div className='chart-container'>
-                <ResponsiveContainer>
+                <ResponsiveContainer width='100%' height={400}>
                     <AreaChart data={data}>
                         <CartesianGrid />
                         <XAxis 
                             dataKey="minutes"
                             type="number"
                             domain={["dataMin", "dataMax"]}
+                            allowDataOverflow={true}
                             hide={false}
                             tickFormatter={(value) => formatChartTime(value, baseTimestamp)}
                             tick={{ fontSize: 12 }}

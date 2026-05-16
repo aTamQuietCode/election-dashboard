@@ -13,8 +13,8 @@
 
 .election-chart .chart-container {
     width: 100%;
-    height: 500px;
-} 
+    height: 400;
+}
 
 .chart-container LineChart {
     margin-top: 5;

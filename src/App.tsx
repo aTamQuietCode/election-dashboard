@@ -6,6 +6,7 @@ import { ElectionTable } from "./components/ElectionTable";
 import "./App.css";
 import { VotingRatioChart } from './components/VotingRatioChart';
 import { PartyVotesChart } from './components/PartyVotesChart';
+import { VelocityChart } from './components/VelocityChart';
 
 const ELECTIONS = [
   { id: "2026", label: "2026年 衆院選 比例", file: "csv/51shuin_hirei_kanagawa.csv" },
@@ -22,24 +23,46 @@ const App = () => {
   const loadData = useCallback((filePath: string) => {
     setLoading(true);
     fetch(filePath)
-      .then(response => response.text())
+      .then(response => {
+        if (!response.ok) throw new Error(`Failed to fetch CSV: ${response.statusText}`);
+        return response.text();
+      })
       .then(csvText => {
         Papa.parse(csvText, {
           header: true,
           dynamicTyping: true,
           skipEmptyLines: true,
           complete: (results) => {
-            console.log('Raw CSV Data sample:', results.data[0]); // ← これで1行目の中身を確認
             const rawData = results.data as RawElectionRecord[];
-            // sort with timestamp
+            
+            // 1. 先に時系列でソート
             const sortedRaw = [...rawData].sort((a, b) => 
               new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
             );
-            setTableData(processElectionCSV(sortedRaw));
-            setParties(Array.from(new Set(rawData.map(record => record.party_name))));
+
+            // 2. 横持ちデータにパース
+            const processed = processElectionCSV(sortedRaw);
+            setTableData(processed);
+
+            // 3. パース後のデータから動的に政党名リストを抽出（確実な方法）
+            const extractedParties = processed.length > 0 
+              ? Object.keys(processed[0]).filter(key => 
+                  !['timestamp', 'minutes', 'totalVotes', 'baseTimestamp', 'total_delta'].includes(key) &&
+                  !key.endsWith('_share') && 
+                  !key.endsWith('_delta')
+                )
+              : [];
+            
+            setParties(extractedParties);
             setLoading(false);
           }
         });
+      })
+      .catch(error => {
+        console.error('Error loading CSV:', error);
+        setTableData([]);
+        setParties([]);
+        setLoading(false);
       });
   }, []);
 
@@ -70,10 +93,13 @@ const App = () => {
         <p>Loading data...</p>
       ) : (
         <>
-          {/* 1. Display the whole progress(total votes) */}
-          <PartyVotesChart data = {tableData} parties={parties} />
+          {/* Display the whole progress(total votes) */}
+          <PartyVotesChart data={tableData} parties={parties} />
 
-          {/* 2. Display the each party map(ratio). */}
+          {/* Display the voting sppeed(incremental votes) */}
+          <VelocityChart data={tableData} parties={parties} />
+
+          {/* Display the each party map(ratio). */}
           <VotingRatioChart data={tableData} parties={parties} />
 
           <div className='election-table'>
