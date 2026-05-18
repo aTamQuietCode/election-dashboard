@@ -10,6 +10,32 @@
   color: #333;
 }
 
+.mode-controls {
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.loading-spinner {
+  display: inline-block; /* これがないと回転してくれない */
+  animation: rotate-z 2s linear infinite; /* 2秒で1回転 */
+}
+@keyframes rotate-z {
+  from { transform: rotateZ(0deg); }
+  to { transform: rotateZ(360deg); }
+}
+
+.compare-view-container {
+  width: auto;
+  height: auto;
+}
+
+.single-view-container {
+  width: auto;
+  height: auto;
+}
+
 .election-tabs {
   display: flex;
   gap: 10px;
@@ -41,4 +67,26 @@
 
 .election-table {
   margin-top: 40px;
+}
+
+.mode-btn {
+  padding: 10px 20px;
+  font-size: 15px;
+  font-weight: bold;
+  border: 1px solid #2563eb;
+  background-color: #2563eb;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.mode-btn:hover {
+  background-color: #2563eb;
+}
+
+.mode-btn.active {
+  background-color: #7d7d7d;
+  color: white;
+  border-color: #5e5e5e;
+  box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);
 }

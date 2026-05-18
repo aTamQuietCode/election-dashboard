@@ -7,31 +7,31 @@
 }
 
 .election-chart h3 {
-    margin-bottom: 0px;
+    margin-top: 0;
+    margin-bottom: 15px;
     color: #333;
+    font-size: 1.2rem;
+    font-weight: bold;
 }
 
 .election-chart .chart-container {
     width: 100%;
-    height: 400;
+    height: 400px; /* 固定値からpx指定に修正 */
 }
 
-.chart-container LineChart {
-    margin-top: 5;
-    margin-right: 30;
-    margin-left: 20;
-    margin-bottom: 5;
+.no-data-msg {
+    padding: 40px;
+    text-align: center;
+    color: #9ca3af;
+    background-color: #f9fafb;
+    border-radius: 8px;
+    border: 1px dashed #e5e7eb;
+    margin-top: 20px;
 }
 
-.chart-container CartesianGrid {
+/* Recharts内部のコンポーネントに対する、明示的なグローバル・グリッドカラー等の上書き指定 */
+.recharts-cartesian-grid-horizontal line,
+.recharts-cartesian-grid-vertical line {
     stroke: #eee;
     stroke-dasharray: 3 3;
-    vertical-align: false;
-}
-
-.chart-container AreaChart {
-    margin-top: 5;
-    margin-right: 30;
-    margin-left: 20;
-    margin-bottom: 5;
 }

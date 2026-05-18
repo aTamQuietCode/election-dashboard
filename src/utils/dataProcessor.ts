@@ -1,6 +1,7 @@
 import type { ChartDataPoint, RawElectionRecord } from "../types/election";
 
-export const processElectionCSV = (rawData: RawElectionRecord[]): ChartDataPoint[] => {
+export const processElectionCSV = (rawData: RawElectionRecord[], overrideBaseDataStr?: string): ChartDataPoint[] => {
+  
   // 1. 有効なデータから最小時間を特定（基準点の動的取得）
   const validData = rawData.filter(d => d && d.timestamp && !isNaN(new Date(d.timestamp).getTime()));
   if (validData.length === 0) return [];
@@ -9,9 +10,9 @@ export const processElectionCSV = (rawData: RawElectionRecord[]): ChartDataPoint
     new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
   );
   
-  const baseDate = new Date(sortedByTime[0].timestamp);
+  const baseTimestampStr = overrideBaseDataStr || sortedByTime[0].timestamp;
+  const baseDate = new Date(baseTimestampStr);
   const baseTimeMs = baseDate.getTime();
-  const baseTimestampStr = sortedByTime[0].timestamp;
 
   // 2. 時刻(timestamp)をキーにしたMapで、同一時刻の複数政党データを1つにまとめる
   const timeMap = new Map<string, ChartDataPoint>();
@@ -45,10 +46,9 @@ export const processElectionCSV = (rawData: RawElectionRecord[]): ChartDataPoint
 
   // 4. 増分（Delta）と 得票率（Share）の計算
   return sortedPoints.map((point, index) => {
+
     const updatedPoint = { ...point };
     const prevPoint = index > 0 ? sortedPoints[index - 1] : null;
-
-    // 票数が含まれている政党名のキーだけを抽出
     const reservedKeys = ['timestamp', 'totalVotes', 'minutes', 'baseTimestamp'];
     const partyNames = Object.keys(point).filter(key => !reservedKeys.includes(key));
 
@@ -56,7 +56,7 @@ export const processElectionCSV = (rawData: RawElectionRecord[]): ChartDataPoint
       const currentVotes = point[partyName] as number || 0;
       const prevVotes = prevPoint ? (prevPoint[partyName] as number || 0) : 0;
 
-      // ① 増分（得票速度用）の計算
+      // 増分（得票速度用）の計算
       const delta = Math.max(0, currentVotes - prevVotes);
       updatedPoint[`${partyName}_delta`] = delta;
 
