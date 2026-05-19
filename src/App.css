@@ -37,25 +37,35 @@
 }
 
 .election-tabs {
-  display: flex;
   gap: 10px;
   margin-bottom: 20px;
 }
 
 .election-tabs button {
+  margin: 10px 5px;
+  color: white;
   padding: 10px 20px;
-  border: none;
-  background-color: #f1f3f4;
-  color: black;
-  cursor: pointer;
-  border-radius: 4px;
+  font-size: 13px;
   font-weight: bold;
+  border: 1px solid #2563eb;
+  background-color: #2563eb;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
 .election-tabs button:hover {
-  background-color: #1a73e8;
+  background-color: #1d4ed8;
+  border-color: #1d4ed8;
   color: white;
-  font-weight: bold;
+}
+
+.election-tabs button.active {
+  background-color: #4b5563;
+  color: white;
+  border-color: #374151;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+  pointer-events: none;
 }
 
 .voting-ratio {
@@ -70,6 +80,8 @@
 }
 
 .mode-btn {
+  margin: 10px 5px;
+  color: white;
   padding: 10px 20px;
   font-size: 15px;
   font-weight: bold;
@@ -81,12 +93,15 @@
 }
 
 .mode-btn:hover {
-  background-color: #2563eb;
+  background-color: #1d4ed8;
+  border-color: #1d4ed8;
+  color: white;
 }
 
 .mode-btn.active {
-  background-color: #7d7d7d;
+  background-color: #4b5563;
   color: white;
-  border-color: #5e5e5e;
-  box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);
+  border-color: #374151;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+  pointer-events: none;
 }

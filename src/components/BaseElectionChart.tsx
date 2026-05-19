@@ -2,6 +2,7 @@ import type React from "react";
 import type { ChartDataPoint } from "../types/election";
 import { ResponsiveContainer } from "recharts";
 import { PARTY_COLORS } from '../types/election';
+import "./ElectionChart.css";
 
 interface RenderPropsParams {
     getPartyColor: (partyName: string) => string;

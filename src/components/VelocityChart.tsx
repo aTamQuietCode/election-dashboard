@@ -2,6 +2,8 @@ import { LineChart, Line } from "recharts";
 import type { ChartDataPoint } from "../types/election";
 import { BaseElectionChart } from "./BaseElectionChart";
 import { renderCommonChartComponents } from "../utils/chartHelpers";
+import "./ElectionChart.css";
+import { useState } from "react";
 
 interface Props {
     data: ChartDataPoint[];
@@ -9,6 +11,8 @@ interface Props {
 }
 
 export const VelocityChart = ({ data, parties }: Props) => {
+    const [hoveredPartyKey, setHoveredPartyKey] = useState<string | null>(null);
+    
     return (
         <BaseElectionChart 
             title="得票速度（時間帯ごとの増分票数）" 
@@ -16,20 +20,45 @@ export const VelocityChart = ({ data, parties }: Props) => {
             yAxisFormatter={(value) => value.toLocaleString()}
         >
             {({ getPartyColor }) => (
-                <LineChart data={data} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-                    {renderCommonChartComponents(data[0]?.baseTimestamp, (v) => v.toLocaleString())}
-                    {parties.map((party) => (
-                        // 速度グラフ特有の HSLステップ幅(35) を反映してカラー生成
-                        <Line 
-                            key={party}
-                            dataKey={`${party}_delta`}
-                            name={`${party}(時速)`}
-                            //stroke={`hsl(${(index * 35) % 360}, 70%, 50%)`}
-                            stroke={getPartyColor(party)}
-                            dot={true}
-                            strokeWidth={2}
-                        />
-                    ))}
+                <LineChart 
+                    data={data} 
+                    className='line-chart-container'
+                    accessibilityLayer={false}
+                    onMouseLeave={() => setHoveredPartyKey(null)}
+                >
+                    {renderCommonChartComponents(data[0]?.baseTimestamp, (v) => v.toLocaleString(), undefined, undefined, hoveredPartyKey)}
+                    {parties.map((party) => {
+                        const currentDataKey = `${party}_delta`;
+                        return (
+                            // 速度グラフ特有の HSLステップ幅(35) を反映してカラー生成
+                            <Line 
+                                key={party}
+                                dataKey={`${party}_delta`}
+                                name={`${party}(時速)`}
+                                stroke={getPartyColor(party)}
+                                strokeWidth={2}
+                                opacity={1}
+                                dot={{ r: 2 }}
+                                activeDot={{ 
+                                    r: 24, 
+                                    strokeWidth: 0, 
+                                    fill: 'transparent'
+                                }}
+                                connectNulls
+                                
+                                // PC用
+                                onMouseOver={() => {
+                                    if (hoveredPartyKey !== currentDataKey) setHoveredPartyKey(currentDataKey);
+                                }}
+                                
+                                // スマホ用
+                                onTouchStart={() => setHoveredPartyKey(currentDataKey)}
+                                onTouchMove={() => {
+                                    if (hoveredPartyKey !== currentDataKey) setHoveredPartyKey(currentDataKey);
+                                }}
+                            />
+                        );
+                    })}
                 </LineChart>
             )}
         </BaseElectionChart>
