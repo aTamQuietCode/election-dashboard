@@ -10,9 +10,9 @@ import { VelocityChart } from './components/VelocityChart';
 import { SyncElectionCharts } from './components/SyncElectionCharts';
 
 const ELECTIONS = [
-  { id: "2026", label: "2026年 衆院選 比例", file: "csv/51shuin_hirei_kanagawa.csv", baseTime: "2026/02/08 20:00" },
-  { id: "2024", label: "2024年 衆院選 比例", file: "csv/50shuin_hirei_kanagawa.csv", baseTime: "2024/10/27 20:00" },
-  { id: "2021", label: "2021年 衆院選 比例", file: "csv/49shuin_hirei_kanagawa.csv", baseTime: "2021/10/31 20:00" },
+  { id: "2026", label: "2026年 衆院選 比例", file: "/csv/51shuin_hirei_kanagawa.csv", baseTime: "2026/02/08 20:00" },
+  { id: "2024", label: "2024年 衆院選 比例", file: "/csv/50shuin_hirei_kanagawa.csv", baseTime: "2024/10/27 20:00" },
+  { id: "2021", label: "2021年 衆院選 比例", file: "/csv/49shuin_hirei_kanagawa.csv", baseTime: "2021/10/31 20:00" },
 ]
 
 interface AllElectionsData {
